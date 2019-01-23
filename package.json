@@ -1,0 +1,14 @@
+{
+  "name": "openapi",
+  "version": "0.0.1",
+  "description": "Victorian Water Register Open API",
+  "main": "index.js",
+  "scripts": {
+    "test": "node_modules/ibm-openapi-validator/src/cli-validator/index.js api.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ibm-openapi-validator": "^0.2.0"
+  }
+}

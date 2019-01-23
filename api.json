@@ -1,0 +1,186 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Victorian Water Register Open API",
+        "version": "0.0.1"
+    },
+    "servers": [{
+        "url": "https://openapi.waterregister.vic.gov.au/{basePath}",
+        "variables": {
+            "basePath": {
+                "default": "latest"
+            }
+        }
+    }],
+    "tags": [{
+        "name": "data",
+        "description": "Water data services",
+        "externalDocs": {
+            "description": "Find out more",
+            "url": "http://waterregister.vic.gov.au"
+        }
+    }],
+    "paths": {
+        "/data/seasonal_determinations": {
+            "get": {
+                "tags": [
+                    "data"
+                ],
+                "summary": "Get seasonal determination(s). To filter by water system(s), specify the system(s) in the query string.",
+                "description": "Seasonal determinations (also known as seasonal allocations and allocation announcements).",
+                "parameters": [{
+                        "in": "query",
+                        "name": "system",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/systems"
+                            }
+                        },
+                        "description": "Water system(s) (optional). Defaults to all water systems."
+                    },
+                    {
+                        "in": "query",
+                        "name": "year",
+                        "schema": {
+                            "type": "string",
+                            "example": "2007_2008"
+                        },
+                        "description": "Year(s) (optional). Defaults to current financial year. Each year is a financial year in the format FROM_TO, e.g. 2007_2008 would be from 1st July 2007 to 30th June 2008. To return historic seasonal determinations up to and including the current financial year, enter a previous financial year (the minimum being 2007_2008)."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/seasonal_determinations"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }],
+                "operationId": "getSeasonalDeterminations"
+            }
+        }
+    },
+    "components": {
+        "responses": {
+            "seasonal_determinations": {
+                "description": "Seasonal determination(s).",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/dataSeasonalDeterminationsGetResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "schemas": {
+            "systems": {
+                "type": "string",
+                "enum": [
+                    "broken",
+                    "bullarook",
+                    "campaspe",
+                    "goulburn",
+                    "loddon",
+                    "murray",
+                    "ovens",
+                    "thomson_macalister",
+                    "werribee"
+                ]
+            },
+            "reliabilities": {
+                "type": "object",
+                "properties": {
+                    "high": {
+                        "type": "array",
+                        "description": "Please note, the length of the array may be zero if a seasonal determination has not been made.",
+                        "items": {
+                            "$ref": "#/components/schemas/determination"
+                        }
+                    },
+                    "low": {
+                        "type": "array",
+                        "description": "Please note, the length of the array may be zero if a seasonal determination has not been made.",
+                        "items": {
+                            "$ref": "#/components/schemas/determination"
+                        }
+                    }
+                },
+                "required": [
+                    "high"
+                ]
+            },
+            "determination": {
+                "type": "object",
+                "properties": {
+                    "determination": {
+                        "description": "Determination in %.",
+                        "type": "integer"
+                    },
+                    "total": {
+                        "description": "Cumulative total of determinations (since the start of the allocation year) in %.",
+                        "type": "integer"
+                    },
+                    "date": {
+                        "description": "Date of determination",
+                        "type": "string",
+                        "format": "date"
+                    }
+                },
+                "required": [
+                    "determination",
+                    "total",
+                    "date"
+                ]
+            },
+            "dataSeasonalDeterminationsGetResponse": {
+                "type": "object",
+                "description": "Seasonal determination response body",
+                "properties": {
+                    "systems": {
+                        "description": "Array of systems",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "description": "Systems may not return reliabilities if not declared.",
+                            "properties": {
+                                "system": {
+                                    "$ref": "#/components/schemas/systems"
+                                },
+                                "determinations": {
+                                    "type": "array",
+                                    "description": "Array of determinations.",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "year": {
+                                                "description": "Year of determination. Each year is a financial year in the format FROM_TO, e.g. 2007_2008 would be from 1st July 2007 to 30th June 2008.",
+                                                "type": "string",
+                                                "example": "2017_2018"
+                                            },
+                                            "reliabilities": {
+                                                "$ref": "#/components/schemas/reliabilities"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "required": [
+                                "system",
+                                "determinations"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "api_key": {
+                "type": "apiKey",
+                "name": "x-api-key",
+                "in": "header"
+            }
+        }
+    }
+}

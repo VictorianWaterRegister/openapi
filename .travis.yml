@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+  - lts/*
+before_deploy:
+  - wget http://central.maven.org/maven2/io/swagger/codegen/v3/swagger-codegen-cli/3.0.3/swagger-codegen-cli-3.0.3.jar -O swagger-codegen-cli.jar
+  - lang=java && java -jar swagger-codegen-cli.jar generate -i api.json -l $lang -o $lang-client
+  - lang=aspnetcore && java -jar swagger-codegen-cli.jar generate -i api.json -l $lang -o $lang-client
+  - lang=java && zip -r $lang-client.zip $lang-client
+  - lang=aspnetcore && zip -r $lang-client.zip $lang-client
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file:
+    - java-client.zip
+    - aspnetcore-client.zip
+  skip_cleanup: true
+  on:
+    tags: true
