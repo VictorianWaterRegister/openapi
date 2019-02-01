@@ -18,14 +18,18 @@ To find out more about the Victorian Water Register please see the About page on
 The latest version of the API provides REST access to the following data sources:
 
 - Seasonal Determinations (also known as Allocation Announcements)
+- Risk of Spill
+- Market Prices
+- Trade Limits
 
 ## Notifications
 
 The latest version of the API also provides notifications for the following data sources:
 
-### Webhooks
-
 - Seasonal Determinations (also known as Allocation Announcements)
+- Risk of Spill
+- Market Prices
+- Trade Limits
 
 ## License
 

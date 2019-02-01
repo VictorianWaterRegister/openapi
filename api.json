@@ -13,20 +13,25 @@
         }
     }],
     "tags": [{
-        "name": "data",
-        "description": "Water data services",
-        "externalDocs": {
-            "description": "Find out more",
-            "url": "http://waterregister.vic.gov.au"
+            "name": "data",
+            "description": "Water data services",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "https://waterregister.vic.gov.au"
+            }
+        },
+        {
+            "name": "subscriptions",
+            "description": "Water data subscriptions"
         }
-    }],
+    ],
     "paths": {
         "/data/seasonal_determinations": {
             "get": {
                 "tags": [
                     "data"
                 ],
-                "summary": "Get seasonal determination(s). To filter by water system(s), specify the system(s) in the query string.",
+                "summary": "Get seasonal determination(s).",
                 "description": "Seasonal determinations (also known as seasonal allocations and allocation announcements).",
                 "parameters": [{
                         "in": "query",
@@ -34,7 +39,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/components/schemas/systems"
+                                "$ref": "#/components/schemas/seasonalDeterminationSystems"
                             }
                         },
                         "description": "Water system(s) (optional). Defaults to all water systems."
@@ -46,7 +51,7 @@
                             "type": "string",
                             "example": "2007_2008"
                         },
-                        "description": "Year(s) (optional). Defaults to current financial year. Each year is a financial year in the format FROM_TO, e.g. 2007_2008 would be from 1st July 2007 to 30th June 2008. To return historic seasonal determinations up to and including the current financial year, enter a previous financial year (the minimum being 2007_2008)."
+                        "description": "Year (optional). Defaults to current financial year. Each year is a financial year in the format FROM_TO, e.g. 2007_2008 would be from 1st July 2007 to 30th June 2008. To return historic seasonal determinations up to and including the current financial year, enter a previous financial year (the minimum being 2007_2008)."
                     }
                 ],
                 "responses": {
@@ -58,6 +63,300 @@
                     "api_key": []
                 }],
                 "operationId": "getSeasonalDeterminations"
+            }
+        },
+        "/data/spill_risks": {
+            "get": {
+                "tags": [
+                    "data"
+                ],
+                "summary": "Get spill declaration(s) and determination(s).",
+                "parameters": [{
+                        "in": "query",
+                        "name": "system",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/spillRiskSystems"
+                            }
+                        },
+                        "description": "Water system(s) (optional). Defaults to all water systems."
+                    },
+                    {
+                        "in": "query",
+                        "name": "year",
+                        "schema": {
+                            "type": "string",
+                            "example": "2010_2011"
+                        },
+                        "description": "Year (optional). Defaults to current financial year. Each year is a financial year in the format FROM_TO, e.g. 2010_2011 would be from 1st July 2010 to 30th June 2011. To return historic seasonal determinations up to and including the current financial year, enter a previous financial year (the minimum being 2010_2011)."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/spill_risks"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }],
+                "operationId": "getSpillRisks"
+            }
+        },
+        "/data/market_prices": {
+            "get": {
+                "tags": [
+                    "data"
+                ],
+                "summary": "Get market (also known as allocation trade) price(s).",
+                "parameters": [{
+                    "in": "query",
+                    "name": "river",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/marketPriceRivers"
+                        }
+                    },
+                    "description": "River(s) (optional). Defaults to all rivers."
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/market_prices"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }],
+                "operationId": "getMarketPrices"
+            }
+        },
+        "/data/trade_limits": {
+            "get": {
+                "tags": [
+                    "data"
+                ],
+                "summary": "Get trade (also known as allocation trade) price(s).",
+                "parameters": [{
+                    "in": "query",
+                    "name": "limit",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/tradeLimits"
+                        }
+                    },
+                    "description": "Trade limit(s) (optional). Defaults to all limits."
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/tradeLimits"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }],
+                "operationId": "getTradeLimits"
+            }
+        },
+        "/subscriptions/seasonal_determinations": {
+            "post": {
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Subscribe to seasonal determinations notifications.",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/subscribe"
+                },
+                "responses": {
+                    "200": {
+                        "description": "Webhook created."
+                    }
+                },
+                "callbacks": {
+                    "confirmation": {
+                        "{$request.body#/callbackUrl}": {
+                            "post": {
+                                "requestBody": {
+                                    "$ref": "#/components/requestBodies/confirmation"
+                                },
+                                "responses": {
+                                    "200": {
+                                        "description": "Your endpoint must return this code if it accepts the callback."
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "notification": {
+                        "{$request.body#/callbackUrl}": {
+                            "post": {
+                                "requestBody": {
+                                    "$ref": "#/components/requestBodies/notification"
+                                },
+                                "responses": {
+                                    "200": {
+                                        "description": "Your endpoint must return this code if it accepts the callback."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }],
+                "operationId": "postSeasonalDeterminationsSubscriptions"
+            }
+        },
+        "/subscriptions/spill_risks": {
+            "post": {
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Subscribe to spill risks notifications.",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/subscribe"
+                },
+                "responses": {
+                    "200": {
+                        "description": "Webhook created."
+                    }
+                },
+                "callbacks": {
+                    "confirmation": {
+                        "{$request.body#/callbackUrl}": {
+                            "post": {
+                                "requestBody": {
+                                    "$ref": "#/components/requestBodies/confirmation"
+                                },
+                                "responses": {
+                                    "200": {
+                                        "description": "Your endpoint must return this code if it accepts the callback."
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "notification": {
+                        "{$request.body#/callbackUrl}": {
+                            "post": {
+                                "requestBody": {
+                                    "$ref": "#/components/requestBodies/notification"
+                                },
+                                "responses": {
+                                    "200": {
+                                        "description": "Your endpoint must return this code if it accepts the callback."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }],
+                "operationId": "postSpillRisksSubscriptions"
+            }
+        },
+        "/subscriptions/market_prices": {
+            "post": {
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Subscribe to market prices notifications.",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/subscribe"
+                },
+                "responses": {
+                    "200": {
+                        "description": "Webhook created."
+                    }
+                },
+                "callbacks": {
+                    "confirmation": {
+                        "{$request.body#/callbackUrl}": {
+                            "post": {
+                                "requestBody": {
+                                    "$ref": "#/components/requestBodies/confirmation"
+                                },
+                                "responses": {
+                                    "200": {
+                                        "description": "Your endpoint must return this code if it accepts the callback."
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "notification": {
+                        "{$request.body#/callbackUrl}": {
+                            "post": {
+                                "requestBody": {
+                                    "$ref": "#/components/requestBodies/notification"
+                                },
+                                "responses": {
+                                    "200": {
+                                        "description": "Your endpoint must return this code if it accepts the callback."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }],
+                "operationId": "postMarketPricesSubscriptions"
+            }
+        },
+        "/subscriptions/trade_limits": {
+            "post": {
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Subscribe to market prices notifications.",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/subscribe"
+                },
+                "responses": {
+                    "200": {
+                        "description": "Webhook created."
+                    }
+                },
+                "callbacks": {
+                    "confirmation": {
+                        "{$request.body#/callbackUrl}": {
+                            "post": {
+                                "requestBody": {
+                                    "$ref": "#/components/requestBodies/confirmation"
+                                },
+                                "responses": {
+                                    "200": {
+                                        "description": "Your endpoint must return this code if it accepts the callback."
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "notification": {
+                        "{$request.body#/callbackUrl}": {
+                            "post": {
+                                "requestBody": {
+                                    "$ref": "#/components/requestBodies/notification"
+                                },
+                                "responses": {
+                                    "200": {
+                                        "description": "Your endpoint must return this code if it accepts the callback."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }],
+                "operationId": "postTradeLimitsSubscriptions"
             }
         }
     },
@@ -72,10 +371,48 @@
                         }
                     }
                 }
+            },
+            "spill_risks": {
+                "description": "Spill risk(s).",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/dataSpillRisksGetResponse"
+                        }
+                    }
+                }
+            },
+            "market_prices": {
+                "description": "Market price(s).",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/dataMarketPriceGetResponse"
+                        }
+                    }
+                }
+            },
+            "tradeLimits": {
+                "description": "Trade limits(s).",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/dataTradeLimitsGetResponse"
+                        }
+                    }
+                }
             }
         },
         "schemas": {
-            "systems": {
+            "spillRiskSystems": {
+                "type": "string",
+                "enum": [
+                    "campaspe",
+                    "goulburn",
+                    "murray"
+                ]
+            },
+            "seasonalDeterminationSystems": {
                 "type": "string",
                 "enum": [
                     "broken",
@@ -89,6 +426,35 @@
                     "werribee"
                 ]
             },
+            "marketPriceRivers": {
+                "type": "string",
+                "enum": [
+                    "goulburn",
+                    "murray"
+                ]
+            },
+            "tradeLimits": {
+                "type": "string",
+                "enum": [
+                    "goulburn_to_murray_trade_limit",
+                    "nsw_to_vic_annual_trade_limit",
+                    "nsw_to_vic_spill_risk_trade_limit",
+                    "broken_trade_out_limit",
+                    "goulburn_back_trade",
+                    "upper_goulburn_back_trade",
+                    "loddon_back_trade",
+                    "campaspe_back_trade",
+                    "lower_broken_creek_back_trade",
+                    "upper_goulburn_lower_broken_back_trade",
+                    "broken_back_trade",
+                    "king_back_trade",
+                    "mid_thomson_back_trade",
+                    "upper_thomson_back_trade",
+                    "bacchus_marsh_back_trade",
+                    "merrimu_back_trade",
+                    "barmah_choke_limit"
+                ]
+            },
             "reliabilities": {
                 "type": "object",
                 "properties": {
@@ -96,14 +462,14 @@
                         "type": "array",
                         "description": "Please note, the length of the array may be zero if a seasonal determination has not been made.",
                         "items": {
-                            "$ref": "#/components/schemas/determination"
+                            "$ref": "#/components/schemas/seasonalDeterminationDetermination"
                         }
                     },
                     "low": {
                         "type": "array",
                         "description": "Please note, the length of the array may be zero if a seasonal determination has not been made.",
                         "items": {
-                            "$ref": "#/components/schemas/determination"
+                            "$ref": "#/components/schemas/seasonalDeterminationDetermination"
                         }
                     }
                 },
@@ -111,7 +477,46 @@
                     "high"
                 ]
             },
-            "determination": {
+            "riskOfSpillDeclarations": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "description": "Low risk of spill status (true is announced)",
+                        "type": "boolean"
+                    },
+                    "date": {
+                        "description": "Date of spill declaration.",
+                        "type": "string",
+                        "format": "date"
+                    }
+                },
+                "required": [
+                    "status"
+                ]
+            },
+            "riskOfSpillDeterminations": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "determination": {
+                            "description": "Determination in %.",
+                            "type": "number",
+                            "format": "float"
+                        },
+                        "date": {
+                            "description": "Date of determination.",
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    "required": [
+                        "determination",
+                        "date"
+                    ]
+                }
+            },
+            "seasonalDeterminationDetermination": {
                 "type": "object",
                 "properties": {
                     "determination": {
@@ -146,7 +551,7 @@
                             "description": "Systems may not return reliabilities if not declared.",
                             "properties": {
                                 "system": {
-                                    "$ref": "#/components/schemas/systems"
+                                    "$ref": "#/components/schemas/seasonalDeterminationSystems"
                                 },
                                 "determinations": {
                                     "type": "array",
@@ -157,7 +562,7 @@
                                             "year": {
                                                 "description": "Year of determination. Each year is a financial year in the format FROM_TO, e.g. 2007_2008 would be from 1st July 2007 to 30th June 2008.",
                                                 "type": "string",
-                                                "example": "2017_2018"
+                                                "example": "2007_2008"
                                             },
                                             "reliabilities": {
                                                 "$ref": "#/components/schemas/reliabilities"
@@ -172,7 +577,160 @@
                             ]
                         }
                     }
-                }
+                },
+                "required": [
+                    "systems"
+                ]
+            },
+            "dataSpillRisksGetResponse": {
+                "type": "object",
+                "description": "Spill risks response body",
+                "properties": {
+                    "systems": {
+                        "description": "Array of systems.",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "description": "Systems may not return spill declarations if not declared.",
+                            "properties": {
+                                "system": {
+                                    "$ref": "#/components/schemas/spillRiskSystems"
+                                },
+                                "risks": {
+                                    "type": "array",
+                                    "description": "Array of risks.",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "year": {
+                                                "description": "Year of spill risks. Each year is a financial year in the format FROM_TO, e.g. 2010_2011 would be from 1st July 2010 to 30th June 2011.",
+                                                "type": "string",
+                                                "example": "2010_2011"
+                                            },
+                                            "declarations": {
+                                                "$ref": "#/components/schemas/riskOfSpillDeclarations"
+                                            },
+                                            "determinations": {
+                                                "$ref": "#/components/schemas/riskOfSpillDeterminations"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "required": [
+                                "system",
+                                "declarations"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "systems"
+                ]
+            },
+            "dataMarketPriceGetResponse": {
+                "type": "object",
+                "description": "Market prices response body",
+                "properties": {
+                    "rivers": {
+                        "description": "Array of river market prices.",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "description": "River price for the last 7 days and previous weeks.",
+                            "properties": {
+                                "river": {
+                                    "$ref": "#/components/schemas/marketPriceRivers"
+                                },
+                                "price": {
+                                    "type": "integer",
+                                    "description": "Prices for the week (last 7 days) ending yesterday in $/ML."
+                                },
+                                "previous": {
+                                    "type": "array",
+                                    "description": "Array of prices for previous weeks.",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "price": {
+                                                "type": "integer",
+                                                "description": "Prices for previous weeks ending on Sundays in $/ML."
+                                            },
+                                            "week": {
+                                                "type": "integer",
+                                                "minimum": 1,
+                                                "maximum": 4
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "required": [
+                                "river",
+                                "price",
+                                "previous"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "rivers"
+                ]
+            },
+            "dataTradeLimitsGetResponse": {
+                "type": "object",
+                "description": "Trade limits response body",
+                "properties": {
+                    "limits": {
+                        "description": "Array of trade limits.",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "description": "Trade limit opportunity.",
+                            "properties": {
+                                "limit": {
+                                    "$ref": "#/components/schemas/tradeLimits"
+                                },
+                                "opportunity": {
+                                    "type": "number",
+                                    "format": "float"
+                                },
+                                "version": {
+                                    "type": "integer"
+                                },
+                                "dateTime": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                },
+                                "components": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "amount": {
+                                                "type": "number",
+                                                "format": "float"
+                                            },
+                                            "description": {
+                                                "type": "string"
+                                            },
+                                            "componentId": {
+                                                "type": "integer"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "required": [
+                                "limit",
+                                "opportunity"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "limits"
+                ]
             }
         },
         "securitySchemes": {
@@ -180,6 +738,179 @@
                 "type": "apiKey",
                 "name": "x-api-key",
                 "in": "header"
+            }
+        },
+        "requestBodies": {
+            "subscribe": {
+                "description": "Webhook subscription request.",
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "description": "Webhook subscription request body.",
+                            "type": "object",
+                            "properties": {
+                                "callback_url": {
+                                    "description": "Your webhook callback URL. Please note only https endpoints are supported.",
+                                    "type": "string",
+                                    "example": "https://api.com/send/callback/here"
+                                }
+                            },
+                            "required": [
+                                "callback_url"
+                            ]
+                        }
+                    }
+                }
+            },
+            "confirmation": {
+                "description": "Subscription confirmation (callback), sent in response to subscription request.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "description": "Subscription confirmation (callback) request body.",
+                            "properties": {
+                                "Type": {
+                                    "description": "Message type",
+                                    "type": "string",
+                                    "example": "SubscriptionConfirmation"
+                                },
+                                "MessageId": {
+                                    "description": "Message ID",
+                                    "type": "string",
+                                    "example": "165545c9-2a5c-472c-8df2-7ff2be2b3b1b"
+                                },
+                                "Token": {
+                                    "description": "Token",
+                                    "type": "string",
+                                    "example": "2336412f37fb687f5d51e6e241d09c805a5a57b30d712f794cc5f6a988666d92768dd60a747ba6f3beb71854e285d6ad02428b09ceece29417f1f02d609c582afbacc99c583a916b9981dd2728f4ae6fdb82efd087cc3b7849e05798d2d2785c03b0879594eeac82c01f235d0e717736"
+                                },
+                                "TopicArn": {
+                                    "description": "SNS topic ARN.",
+                                    "type": "string",
+                                    "example": "arn:aws:sns:us-west-2:123456789012:MyTopic"
+                                },
+                                "Message": {
+                                    "description": "Message content.",
+                                    "type": "string",
+                                    "example": "You have chosen to subscribe to the topic arn:aws:sns:us-west-2:123456789012:MyTopic.\nTo confirm the subscription, visit the SubscribeURL included in this message."
+                                },
+                                "SubscribeURL": {
+                                    "description": "Subscription URL. Navigate to this URL to subscribe.",
+                                    "type": "string",
+                                    "example": "https://sns.us-west-2.amazonaws.com/?Action=ConfirmSubscription&TopicArn=arn:aws:sns:us-west-2:123456789012:MyTopic&Token=2336412f37fb687f5d51e6e241d09c805a5a57b30d712f794cc5f6a988666d92768dd60a747ba6f3beb71854e285d6ad02428b09ceece29417f1f02d609c582afbacc99c583a916b9981dd2728f4ae6fdb82efd087cc3b7849e05798d2d2785c03b0879594eeac82c01f235d0e717736"
+                                },
+                                "Timestamp": {
+                                    "description": "Message timestamp.",
+                                    "type": "string",
+                                    "example": "2012-04-26T20:45:04.751Z"
+                                },
+                                "SignatureVersion": {
+                                    "description": "Message signature version.",
+                                    "type": "string",
+                                    "example": "1"
+                                },
+                                "Signature": {
+                                    "description": "Message signature.",
+                                    "type": "string",
+                                    "example": "EXAMPLEpH+DcEwjAPg8O9mY8dReBSwksfg2S7WKQcikcNKWLQjwu6A4VbeS0QHVCkhRS7fUQvi2egU3N858fiTDN6bkkOxYDVrY0Ad8L10Hs3zH81mtnPk5uvvolIC1CXGu43obcgFxeL3khZl8IKvO61GWB6jI9b5+gLPoBc1Q="
+                                },
+                                "SigningCertURL": {
+                                    "description": "Message signing certificate URL.",
+                                    "type": "string",
+                                    "example": "https://sns.us-west-2.amazonaws.com/SimpleNotificationService-f3ecfb7224c7233fe7bb5f59f96de52f.pem"
+                                }
+                            },
+                            "required": [
+                                "Type",
+                                "MessageId",
+                                "Token",
+                                "TopicArn",
+                                "Message",
+                                "SubscribeURL",
+                                "Timestamp",
+                                "SignatureVersion",
+                                "Signature",
+                                "SigningCertURL"
+                            ]
+                        }
+                    }
+                }
+            },
+            "notification": {
+                "description": "Notification (callback).",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "description": "Notification (callback) request body.",
+                            "properties": {
+                                "Type": {
+                                    "description": "Message type",
+                                    "type": "string",
+                                    "example": "Notification"
+                                },
+                                "MessageId": {
+                                    "description": "Message ID",
+                                    "type": "string",
+                                    "example": "22b80b92-fdea-4c2c-8f9d-bdfb0c7bf324"
+                                },
+                                "TopicArn": {
+                                    "description": "SNS topic ARN,",
+                                    "type": "string",
+                                    "example": "arn:aws:sns:us-west-2:123456789012:MyTopic"
+                                },
+                                "Subject": {
+                                    "description": "Message subject.",
+                                    "type": "string",
+                                    "example": "My First Message"
+                                },
+                                "Message": {
+                                    "description": "Message content.",
+                                    "type": "string"
+                                },
+                                "Timestamp": {
+                                    "description": "Message timestamp.",
+                                    "type": "string",
+                                    "example": "2012-05-02T00:54:06.655Z"
+                                },
+                                "SignatureVersion": {
+                                    "description": "Message signature version.",
+                                    "type": "string",
+                                    "example": "1"
+                                },
+                                "Signature": {
+                                    "description": "Message signature.",
+                                    "type": "string",
+                                    "example": "EXAMPLEw6JRNwm1LFQL4ICB0bnXrdB8ClRMTQFGBqwLpGbM78tJ4etTwC5zU7O3tS6tGpey3ejedNdOJ+1fkIp9F2/LmNVKb5aFlYq+9rk9ZiPph5YlLmWsDcyC5T+Sy9/umic5S0UQc2PEtgdpVBahwNOdMW4JPwk0kAJJztnc="
+                                },
+                                "SigningCertURL": {
+                                    "description": "Message signing certificate URL.",
+                                    "type": "string",
+                                    "example": "https://sns.us-west-2.amazonaws.com/SimpleNotificationService-f3ecfb7224c7233fe7bb5f59f96de52f.pem"
+                                },
+                                "UnsubscribeURL": {
+                                    "description": "Unsubscription URL. Navigate to this URL to unsubscribe.",
+                                    "type": "string",
+                                    "example": "https://sns.us-west-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-west-2:123456789012:MyTopic:c9135db0-26c4-47ec-8998-413945fb5a96"
+                                }
+                            },
+                            "required": [
+                                "Type",
+                                "MessageId",
+                                "TopicArn",
+                                "Subject",
+                                "Message",
+                                "Timestamp",
+                                "SignatureVersion",
+                                "Signature",
+                                "SigningCertURL",
+                                "UnsubscribeURL"
+                            ]
+                        }
+                    }
+                }
             }
         }
     }
