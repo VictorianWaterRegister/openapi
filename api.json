@@ -136,7 +136,7 @@
                 "tags": [
                     "data"
                 ],
-                "summary": "Get trade (also known as allocation trade) price(s).",
+                "summary": "Get trade limit opportunity and component(s).",
                 "parameters": [{
                     "in": "query",
                     "name": "limit",
@@ -314,7 +314,7 @@
                 "tags": [
                     "subscriptions"
                 ],
-                "summary": "Subscribe to market prices notifications.",
+                "summary": "Subscribe to trade limit opportunity and component(s) notifications.",
                 "requestBody": {
                     "$ref": "#/components/requestBodies/subscribe"
                 },
