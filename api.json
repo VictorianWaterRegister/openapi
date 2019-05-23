@@ -168,7 +168,7 @@
                 "parameters": [
                     {
                         "in": "query",
-                        "name": "From Zone",
+                        "name": "fromZone",
                         "schema": {
                             "type": "string",
                             "example": "1A"
@@ -177,7 +177,7 @@
                     },
                     {
                         "in": "query",
-                        "name": "To Zone",
+                        "name": "toZone",
                         "schema": {
                             "type": "string",
                             "example": "2B"
