@@ -164,7 +164,7 @@
                 "tags": [
                     "data"
                 ],
-                "summary": "Get opportunities",
+                "summary": "Get opportunities from one zone to another",
                 "parameters": [
                     {
                         "in": "query",
@@ -173,16 +173,16 @@
                             "type": "string",
                             "example": "1A"
                         },
-                        "description": "From Zone. The source trading zone."
+                        "description": "The source trading zone."
                     },
                     {
                         "in": "query",
                         "name": "toZone",
                         "schema": {
                             "type": "string",
-                            "example": "2B"
+                            "example": "7"
                         },
-                        "description": "To Zone. The destination trading zone."
+                        "description": "The destination trading zone."
                     }
                 ],
                 "responses": {
@@ -190,9 +190,6 @@
                         "$ref": "#/components/responses/opportunities"
                     }
                 },
-                "security": [{
-                    "api_key": []
-                }],
                 "operationId": "getOpportunityResults"
             }
         },
@@ -789,7 +786,7 @@
                     "toZone": {
                         "type": "string"
                     },
-                    "reqSuccess": {
+                    "requestSuccess": {
                         "type": "string"
                     },
                     "errorDesc": {
@@ -835,7 +832,7 @@
                 "required": [
                     "fromZone",
                     "toZone",
-                    "reqSuccess"
+                    "requestSuccess"
                 ]
             }
         },

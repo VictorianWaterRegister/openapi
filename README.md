@@ -21,6 +21,7 @@ The latest version of the API provides REST access to the following data sources
 - Risk of Spill
 - Market Prices
 - Trade Limits
+- Opportunities
 
 ## Notifications
 
