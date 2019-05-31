@@ -190,6 +190,9 @@
                         "$ref": "#/components/responses/opportunities"
                     }
                 },
+                "security": [{
+                    "api_key": []
+                }],
                 "operationId": "getOpportunityResults"
             }
         },
