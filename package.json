@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ibm-openapi-validator": "^0.2.0"
+    "ibm-openapi-validator": "^0.10.2"
   }
 }
