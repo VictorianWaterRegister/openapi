@@ -159,6 +159,43 @@
                 "operationId": "getTradeLimits"
             }
         },
+        "/data/opportunities": {
+            "get": {
+                "tags": [
+                    "data"
+                ],
+                "summary": "Get opportunities from one zone to another",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "fromZone",
+                        "schema": {
+                            "type": "string",
+                            "example": "1A"
+                        },
+                        "description": "The source trading zone."
+                    },
+                    {
+                        "in": "query",
+                        "name": "toZone",
+                        "schema": {
+                            "type": "string",
+                            "example": "7"
+                        },
+                        "description": "The destination trading zone."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/opportunities"
+                    }
+                },
+                "security": [
+                              
+                ],
+                "operationId": "getOpportunityResults"
+            }
+        },
         "/subscriptions/seasonal_determinations": {
             "post": {
                 "tags": [
@@ -398,6 +435,16 @@
                     "application/json": {
                         "schema": {
                             "$ref": "#/components/schemas/dataTradeLimitsGetResponse"
+                        }
+                    }
+                }
+            },
+            "opportunities": {
+                "description": "Opportunities.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/dataOpportunitiesGetResponse"
                         }
                     }
                 }
@@ -730,6 +777,65 @@
                 },
                 "required": [
                     "limits"
+                ]
+            },
+            "dataOpportunitiesGetResponse": {
+                "type": "object",
+                "description": "Opportunities response body",
+                "properties": {
+                    "fromZone": {
+                        "type": "string"
+                    },
+                    "toZone": {
+                        "type": "string"
+                    },
+                    "requestSuccess": {
+                        "type": "string"
+                    },
+                    "errorDesc": {
+                        "type": "string"
+                    },
+                    "tradeOpportunity": {
+                        "type": "string"
+                    },
+                    "tradeOpportunityStructure": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "tradeRestriction": {
+                                    "type": "string"
+                                },
+                                "tradeRestrictionVolume": {
+                                    "type": "number",
+                                    "format": "float"
+                                }
+                            }
+                        }
+                    },
+                    "useOpportunity": {
+                        "type": "string"
+                    },
+                    "useOpportunityStructure": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "useRestriction": {
+                                    "type": "string"
+                                },
+                                "useRestrictionValue": {
+                                    "type": "number",
+                                    "format": "float"
+                                }
+                            }
+                        }
+                    }
+                },
+                "required": [
+                    "fromZone",
+                    "toZone",
+                    "requestSuccess"
                 ]
             }
         },
